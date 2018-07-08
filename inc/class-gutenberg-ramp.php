@@ -143,6 +143,9 @@ class Gutenberg_Ramp {
 			return true;
 		}
 
+		// TODO: Check if array?
+		// TODO: How to handle string WP_Query $args? Or allow at all?
+
 		// We will use the post__in WP_Query param to check for a match; if the user has
 		// already specified post__in in the gutenberg_ramp_load_gutenberg call, we do
 		// not want to override
