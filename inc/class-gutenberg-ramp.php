@@ -142,6 +142,23 @@ class Gutenberg_Ramp {
 		if ( in_array( $gutenberg_ramp_post_id, $gutenberg_ramp_post_ids, true ) ) {
 			return true;
 		}
+
+		// We will use the post__in WP_Query param to check for a match; if the user has
+		// already specified post__in in the gutenberg_ramp_load_gutenberg call, we do
+		// not want to override
+		if ( isset( $criteria['post__in'] ) ) {
+			if ( ! in_array( $gutenberg_ramp_post_id, $criteria['post__in'], true ) ) {
+				return false;
+			}
+		}
+		// Because post__in, not set at this point, takes precedence over post__not_in,
+		// we want to make sure that we don't accidentally override the user-specified
+		// post__not_in param
+		elseif ( isset( $criteria['post__not_in'] ) ) {
+			if ( in_array( $gutenberg_ramp_post_id, $criteria['post__not_in'], true ) ) {
+				return false;
+			}
+		}
 	}
 
 
