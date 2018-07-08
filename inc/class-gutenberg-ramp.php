@@ -162,6 +162,24 @@ class Gutenberg_Ramp {
 				return false;
 			}
 		}
+
+		$criteria = array_merge( $criteria, [
+			// we do not need actual content
+			'fields' => 'ids',
+			'ignore_sticky_posts' => true,
+			// merge existing criteria w/ current post ID
+			'post__in' => [ $gutenberg_ramp_post_id ],
+		] );
+
+		$query = new WP_Query( $criteria );
+
+		// checking for post results membership instead of (not) empty check
+		// because it looked like the use of the p WP_Query param (at least
+		// for the same post type) would override the post__in param,
+		// resulting in a false positive
+		$matches = is_array( $query->posts ) ? array_values( $query->posts ) : [];
+
+		return in_array( $gutenberg_ramp_post_id, $matches, true );
 	}
 
 
