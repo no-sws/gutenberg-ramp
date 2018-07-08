@@ -127,7 +127,7 @@ class Gutenberg_Ramp {
 		$gutenberg_ramp_post_id = $this->get_current_post_id();
 
 		// check post_types
-		if ( $this->is_allowed_post_type( $gutenberg_ramp_post_id ) ) {
+		if ( empty( $criteria ) && $this->is_allowed_post_type( $gutenberg_ramp_post_id ) ) {
 			return true;
 		}
 
