@@ -48,6 +48,8 @@ function gutenberg_ramp_load_gutenberg( $criteria = true ) {
 	 */
 	if ( is_bool( $criteria ) ) {
 		$criteria = [ 'load' => (int) $criteria ];
+	} elseif ( is_string( $criteria ) ) {
+		$criteria = wp_parse_args( $criteria );
 	} else if ( isset( $criteria['load'] ) && is_bool( $criteria['load'] ) ) {
 		$criteria['load'] = (int) $criteria['load'];
 	}
@@ -58,7 +60,7 @@ function gutenberg_ramp_load_gutenberg( $criteria = true ) {
 		// the criteria specified in code have changed -- update them
 		$gutenberg_ramp->criteria->set( $criteria );
 	}
-	// indicate that we've loaded the plugin. 
+	// indicate that we've loaded the plugin.
 	$gutenberg_ramp->active = true;
 }
 
