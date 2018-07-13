@@ -137,7 +137,7 @@ class Gutenberg_Ramp_Criteria {
 			return false;
 		}
 
-		$criteria_whitelist = [ 'post_ids', 'post_types', 'load' ];
+		$criteria_whitelist = [ 'post_ids', 'post_types', 'load', 'query' ];
 		foreach ( $criteria as $key => $value ) {
 			if ( ! in_array( $key, $criteria_whitelist, true ) ) {
 				return false;
