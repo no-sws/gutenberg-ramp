@@ -126,6 +126,47 @@ class Gutenberg_Ramp {
 		// 2. there's an available post_id in the URL to check
 		$gutenberg_ramp_post_id = $this->get_current_post_id();
 
+		// Check if query criteria available
+		if ( ! empty( $criteria['query'] ) ) {
+			$args = $criteria['query'];
+
+			// We will use the post__in WP_Query param to check for a match; if the user has
+			// already specified post__in in the gutenberg_ramp_load_gutenberg call, we do
+			// not want to override
+			if ( isset( $args['post__in'] ) ) {
+				if ( ! in_array( $gutenberg_ramp_post_id, $args['post__in'], true ) ) {
+					return false;
+				}
+			}
+
+			// Because post__in, not set at this point, takes precedence over post__not_in,
+			// we want to make sure that we don't accidentally override the user-specified
+			// post__not_in param
+			elseif ( isset( $args['post__not_in'] ) ) {
+				if ( in_array( $gutenberg_ramp_post_id, $args['post__not_in'], true ) ) {
+					return false;
+				}
+			}
+
+			$args = array_merge( $args, [
+				// We do not need actual content
+				'fields' => 'ids',
+				'ignore_sticky_posts' => true,
+				// Merge existing query criteria w/ current post ID
+				'post__in' => [ $gutenberg_ramp_post_id ],
+			] );
+
+			$query = new WP_Query( $args );
+
+			// Checking for post results membership instead of (not) empty check
+			// because it looked like the use of the p WP_Query param (at least
+			// for the same post type) would override the post__in param,
+			// resulting in a false positive
+			$matches = is_array( $query->posts ) ? array_values( $query->posts ) : [];
+
+			return in_array( $gutenberg_ramp_post_id, $matches, true );
+		}
+
 		// check post_types
 		if ( empty( $criteria ) && $this->is_allowed_post_type( $gutenberg_ramp_post_id ) ) {
 			return true;
@@ -142,43 +183,6 @@ class Gutenberg_Ramp {
 		if ( in_array( $gutenberg_ramp_post_id, $gutenberg_ramp_post_ids, true ) ) {
 			return true;
 		}
-
-		// TODO: Check if array?
-
-		// We will use the post__in WP_Query param to check for a match; if the user has
-		// already specified post__in in the gutenberg_ramp_load_gutenberg call, we do
-		// not want to override
-		if ( isset( $criteria['post__in'] ) ) {
-			if ( ! in_array( $gutenberg_ramp_post_id, $criteria['post__in'], true ) ) {
-				return false;
-			}
-		}
-		// Because post__in, not set at this point, takes precedence over post__not_in,
-		// we want to make sure that we don't accidentally override the user-specified
-		// post__not_in param
-		elseif ( isset( $criteria['post__not_in'] ) ) {
-			if ( in_array( $gutenberg_ramp_post_id, $criteria['post__not_in'], true ) ) {
-				return false;
-			}
-		}
-
-		$criteria = array_merge( $criteria, [
-			// we do not need actual content
-			'fields' => 'ids',
-			'ignore_sticky_posts' => true,
-			// merge existing criteria w/ current post ID
-			'post__in' => [ $gutenberg_ramp_post_id ],
-		] );
-
-		$query = new WP_Query( $criteria );
-
-		// checking for post results membership instead of (not) empty check
-		// because it looked like the use of the p WP_Query param (at least
-		// for the same post type) would override the post__in param,
-		// resulting in a false positive
-		$matches = is_array( $query->posts ) ? array_values( $query->posts ) : [];
-
-		return in_array( $gutenberg_ramp_post_id, $matches, true );
 	}
 
 
