@@ -162,6 +162,11 @@ class Gutenberg_Ramp_Criteria {
 						return false;
 					}
 					break;
+				case 'query':
+					if ( ! ( is_array( $value ) || is_string( $value ) ) ) {
+						return false;
+					}
+					break;
 				default:
 					break;
 			}
