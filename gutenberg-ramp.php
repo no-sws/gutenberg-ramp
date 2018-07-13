@@ -48,10 +48,10 @@ function gutenberg_ramp_load_gutenberg( $criteria = true ) {
 	 */
 	if ( is_bool( $criteria ) ) {
 		$criteria = [ 'load' => (int) $criteria ];
-	} elseif ( is_string( $criteria ) ) {
-		$criteria = wp_parse_args( $criteria );
 	} else if ( isset( $criteria['load'] ) && is_bool( $criteria['load'] ) ) {
 		$criteria['load'] = (int) $criteria['load'];
+	} elseif ( isset( $criteria['query'] ) && is_string( $criteria['query'] ) ) {
+		$criteria['query'] = wp_parse_args( $criteria['query'] );
 	}
 
 	$stored_criteria = $gutenberg_ramp->criteria->get();
