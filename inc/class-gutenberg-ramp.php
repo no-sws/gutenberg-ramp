@@ -73,10 +73,13 @@ class Gutenberg_Ramp {
 		 *      * case 1: gutenberg should load according to our criteria but it will not currently do so
 		 *      * case 2: gutenberg should not load according to our criteria, but it will currently do so
 		 */
-		if ( $this->gutenberg_should_load() && ! $this->gutenberg_will_load() ) {
+		$should_load = $this->gutenberg_should_load();
+		$will_load = $this->gutenberg_will_load();
+
+		if ( $should_load && ! $will_load ) {
 			// this is case 1 ... force gutenberg to load if possible
 			$this->gutenberg_load();
-		} elseif ( ! $this->gutenberg_should_load() && $this->gutenberg_will_load() ) {
+		} elseif ( ! $should_load && $will_load ) {
 			// this is case 2 ... force gutenberg to bail if possible
 			// @TODO: define this behavior -- will probably leverage the classic editor plugin or some version thereof
 			$this->gutenberg_unload();
